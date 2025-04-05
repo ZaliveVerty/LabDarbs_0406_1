@@ -1,0 +1,26 @@
+name: "Deploy python app"
+description: "Composite action to deploy our python app using pm2"
+inputs:
+  environment:
+    description: 'Environment where to deploy Sample Book Application'
+    required: true
+  port:
+    description: 'Port for our Sample Book Application'
+    required: true
+  type:
+    description: 'Print environment type'
+    required: true
+runs:
+  using: composite
+  steps:
+  - name: Print step name
+    run: echo "Deploying to ${{ inputs.type }} environment..."
+    shell: bash
+  - name: Delete existing services
+    run: pm2 delete greetings-app-${{ inputs.environment }} & set errorlevel=0
+    shell: bash
+    working-directory: ./python-greetings
+  - name: Start services
+    run: pm2 start app.py --name greetings-app-${{ inputs.environment }} -- --port ${{ inputs.port }}
+    shell: bash
+    working-directory: ./python-greetings

@@ -1,0 +1,26 @@
+name: "Deploy python app"
+description: "Composite action to deploy our python app using pm2"
+inputs:
+  environment:
+    description: 'Environment where to execute tests against'
+    required: true
+  test-suite:
+    description: 'Testing suite which needs to be executed'
+    default: 'greetings'
+  type:
+    description: 'Print environment type'
+    required: true
+runs:
+  using: composite
+  steps:
+      - name: Print step name
+        run: echo "Running tests on ${{ inputs.type }} environment... "
+        shell: bash
+      - name: Install all dependencies
+        run: npm install
+        shell: bash
+        working-directory: ./course-js-api-framework
+      - name: Run tests
+        run: npm run ${{ inputs.test-suite }} ${{ inputs.test-suite }}_${{ inputs.environment }}
+        shell: bash
+        working-directory: ./course-js-api-framework
